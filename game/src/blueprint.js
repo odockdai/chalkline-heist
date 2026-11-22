@@ -126,19 +126,7 @@ function paintCover(ctx, map) {
       if (tileAt(map, c, r) !== K.COVER) continue;
       const x = c * TILE;
       const y = r * TILE;
-      ctx.fillStyle = 'rgba(0,3,10,0.55)';
-      ctx.fillRect(x + 4, y + 5, TILE, TILE);
-    }
-  }
-  for (let r = 0; r < ROWS; r += 1) {
-    for (let c = 0; c < COLS; c += 1) {
-      if (tileAt(map, c, r) !== K.COVER) continue;
-      const x = c * TILE;
-      const y = r * TILE;
-      const face = ctx.createLinearGradient(x, y, x, y + TILE);
-      face.addColorStop(0, COLOR.furnitureTop);
-      face.addColorStop(1, COLOR.furniture);
-      ctx.fillStyle = face;
+      ctx.fillStyle = COLOR.furniture;
       ctx.fillRect(x, y, TILE, TILE);
     }
   }

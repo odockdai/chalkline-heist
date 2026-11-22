@@ -202,7 +202,7 @@ export function draw(options = {}) {
   if (notes) {
     ctx.save();
     ctx.translate(MAP.x, MAP.y);
-    drawFieldNotes(ctx, fieldNotes(run, options.noteLimit ?? 4), 19, [...run.guards, ...run.cameras]);
+    drawFieldNotes(ctx, fieldNotes(run, options.noteLimit ?? 5), 17);
     ctx.restore();
   }
   if (planning) startMarker(ctx, run);
