@@ -1,0 +1,162 @@
+// The three jobs, drawn as blueprints. Each grid is 30 x 19 tiles:
+//   #  wall          .  floor           ,  shadow (hidden beyond arm's reach)
+//   T  tall cover    V  vent (crawl)    L  locked door (needs a pick)
+//   F  fuse box      S  start           X  getaway van    *  the mark    $  cash
+// Guards walk their routes tile by tile and wait at each stop, sweeping their torch across
+// `look` (radians either side of their heading). Cameras sweep `sweep` either side of `base`.
+
+const DOWN = Math.PI / 2;
+const UP = -Math.PI / 2;
+const LEFT = Math.PI;
+const RIGHT = 0;
+
+export const JOBS = [
+  {
+    id: 'hollis',
+    name: 'The Hollis Gallery',
+    brief: 'A quiet private gallery. Three guards, three cameras, one gilded prize.',
+    mark: { name: 'the Saffron Idol', value: 1400 },
+    funds: 900,
+    rooms: [
+      { label: 'COAT ROOM', x: 1.3, y: 7.6 },
+      { label: 'SCULPTURE HALL', x: 10.3, y: 8.6 },
+      { label: 'CURATOR', x: 21.4, y: 8.6 },
+      { label: 'LOADING BAY', x: 1.3, y: 13.9 },
+      { label: 'LONG GALLERY', x: 12.3, y: 10.6 },
+      { label: 'STRONG ROOM', x: 21.4, y: 17.6 },
+    ],
+    grid: [
+      '##############################',
+      '#,,......#,,......,,#...,,,,,#',
+      '#,S......#,,......,,#.TT.,$,,#',
+      '#............T..T...#.TT.,,,,#',
+      '#..TT...............L........#',
+      '#..TT....#..........#....TT..#',
+      '#........#...T..T...#....TT..#',
+      '#,,....,,V,,......,,#.$.....F#',
+      '#,,,...,,#,,......,,#,,,..,,,#',
+      '####..########..########VV####',
+      '#,,......#,,......,,#,,....,,#',
+      '#,TT..TT,#..TT..TT...........#',
+      '#,TT..TT,#.............T..T..#',
+      '#...................#........#',
+      '#...........TT..TT..#....*...#',
+      '#,,..TT..#..........#..T..T..#',
+      '#,X..TT..#$,,,,,,,,,L........#',
+      '#,,,.....#,,,,,,,,,,#,,....,,#',
+      '##############################',
+    ],
+    guards: [
+      { name: 'Dunmore', route: [[11, 4, 1.6, 0.9], [18, 4, 1.6, 0.9], [18, 7, 1.2, 0.7], [11, 7, 1.2, 0.7]] },
+      { name: 'Okafor', route: [[11, 13, 2.2, 1.0], [18, 12, 2.2, 1.0]] },
+      { name: 'Brisk', route: [[22, 11, 1.4, 0.8], [27, 11, 1.0, 0.6], [27, 16, 1.4, 0.8], [22, 16, 1.0, 0.6]] },
+    ],
+    cameras: [
+      { x: 15, y: 1.1, base: DOWN, sweep: 1.0, period: 7 },
+      { x: 19.85, y: 10.15, base: DOWN + 0.75, sweep: 0.55, period: 6 },
+      { x: 28.85, y: 10.15, base: DOWN + 0.8, sweep: 0.5, period: 5.5 },
+    ],
+  },
+  {
+    id: 'marrowgate',
+    name: 'Marrowgate Savings & Loan',
+    brief: 'A vault in the middle of the bank, three ways in. Five guards walk the floor.',
+    mark: { name: 'the Ember Ledger', value: 2600 },
+    funds: 1000,
+    rooms: [
+      { label: 'ARCHIVE', x: 1.3, y: 1.6 },
+      { label: 'CLERKS', x: 10.3, y: 5.6 },
+      { label: 'SECURITY', x: 23.3, y: 1.6 },
+      { label: 'MAIL ROOM', x: 1.3, y: 11.6 },
+      { label: 'VAULT', x: 12.3, y: 11.6 },
+      { label: 'MANAGER', x: 24.3, y: 11.6 },
+      { label: 'TELLER HALL', x: 11.3, y: 17.6 },
+    ],
+    grid: [
+      '##############################',
+      '#,,......#,,........,,#......#',
+      '#,TT..TT.#..T..T..T...#.TT.$,#',
+      '#.....................L......#',
+      '#..,,....#..T..T..T...#..TT..#',
+      '#..,,....#,,........,,#.....F#',
+      '####..####.####LL####.###..###',
+      '#,,,....#..#,,....,,#..#.....#',
+      '#S......V..#..T..T..#..#..$,,#',
+      '#,,,.......V....*...V......,,#',
+      '#,,,....#..#..T..T..#..#.....#',
+      '#.......#..#,,....,,#..#,,...#',
+      '####..###..##########..###..##',
+      '#,,........................,,#',
+      '#...TT...TT......TT...TT.....#',
+      '#,,......,,......,,......,,..#',
+      '#.$.TT...TT......TT...TT..X..#',
+      '#,,,......................,,,#',
+      '##############################',
+    ],
+    guards: [
+      { name: 'Pell', route: [[11, 3, 1.8, 1.0], [20, 3, 1.8, 1.0]] },
+      { name: 'Hask', route: [[13, 8, 1.2, 0.7], [18, 8, 1.2, 0.7], [18, 10, 1.2, 0.7], [13, 10, 1.2, 0.7]] },
+      { name: 'Vance', route: [[2, 13, 1.6, 0.9], [13, 13, 1.0, 0.6], [13, 17, 1.6, 0.9], [2, 17, 1.0, 0.6]] },
+      { name: 'Mori', route: [[15, 13, 1.4, 0.8], [27, 13, 1.8, 0.9], [27, 17, 1.4, 0.8], [15, 17, 1.0, 0.6]] },
+      { name: 'Quill', route: [[22, 7, 2.0, 0.9], [22, 11, 2.0, 0.9]] },
+    ],
+    cameras: [
+      { x: 15.5, y: 1.1, base: DOWN, sweep: 1.05, period: 8 },
+      { x: 16, y: 13.1, base: DOWN, sweep: 1.0, period: 7 },
+      { x: 12.15, y: 7.15, base: DOWN - 0.75, sweep: 0.5, period: 5 },
+      { x: 23.15, y: 1.15, base: DOWN - 0.8, sweep: 0.55, period: 6 },
+    ],
+  },
+  {
+    id: 'quillon',
+    name: 'The Quillon Observatory',
+    brief: 'A domed museum. The prize sits on the telescope dais, ringed by pillars.',
+    mark: { name: 'the Comet Opal', value: 4200 },
+    funds: 1200,
+    rooms: [
+      { label: 'ROOF GARDEN', x: 1.3, y: 4.6 },
+      { label: 'STAR CHARTS', x: 8.3, y: 1.6 },
+      { label: 'LIBRARY', x: 19.3, y: 1.6 },
+      { label: 'WEST WING', x: 1.3, y: 11.6 },
+      { label: 'ROTUNDA', x: 10.3, y: 6.6 },
+      { label: 'EAST WING', x: 19.3, y: 11.6 },
+      { label: 'ENTRY HALL', x: 11.3, y: 17.6 },
+    ],
+    grid: [
+      '##############################',
+      '#X..,,,#..........#,,,,....$.#',
+      '#......#..TT..TT..#..........#',
+      '#,,....L..........#..TT..TT..#',
+      '#,,....#..TT..TT..L..........#',
+      '###..#####..,,..#####..#######',
+      '#,,..,,#,,......,,#,,..,,....#',
+      '#......#..##..##..#......TT..#',
+      '#..TT..V..#....#..V..TT......#',
+      '#..TT..#.....*....#..TT...,,,#',
+      '#......#..#....#..#.......,,,#',
+      '#,,..,,#..##..##..#,,....TT..#',
+      '###..#####,,..,,#####..###..##',
+      '#,,.........................,#',
+      '#...TT....TT....TT....TT.....#',
+      '#,,.......,,........,,......,#',
+      '#.$..TT.......S.......TT..$..#',
+      '#,,,......................,,,#',
+      '##############################',
+    ],
+    guards: [
+      { name: 'Sable', route: [[9, 9, 1.4, 0.9], [9, 6, 1.0, 0.6], [16, 6, 1.4, 0.9], [16, 11, 1.0, 0.6], [9, 11, 1.0, 0.6]] },
+      { name: 'Tarrant', route: [[3, 14, 1.8, 1.0], [26, 14, 1.8, 1.0]] },
+      { name: 'Lisle', route: [[8, 2, 1.4, 0.9], [17, 2, 1.0, 0.6], [17, 4, 1.4, 0.9], [8, 4, 1.0, 0.6]] },
+      { name: 'Corran', route: [[20, 6, 1.6, 0.8], [27, 9, 1.6, 0.8], [20, 11, 1.6, 0.8]] },
+      { name: 'Wick', route: [[1, 6, 1.4, 0.8], [6, 10, 1.4, 0.8], [1, 11, 1.0, 0.6], [6, 6, 1.0, 0.6]] },
+    ],
+    cameras: [
+      { x: 12.5, y: 5.2, base: DOWN, sweep: 0.9, period: 6 },
+      { x: 12.5, y: 13.1, base: DOWN, sweep: 1.1, period: 7.5 },
+      { x: 18.85, y: 1.15, base: DOWN + 0.8, sweep: 0.55, period: 6 },
+      { x: 1.15, y: 1.15, base: DOWN - 0.8, sweep: 0.5, period: 5 },
+    ],
+  },
+];
+
+export const HEADINGS = { DOWN, UP, LEFT, RIGHT };

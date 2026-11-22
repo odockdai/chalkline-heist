@@ -1,0 +1,6 @@
+[
+  { "name": "1-heist.jpg", "query": "?shot=cover" },
+  { "name": "2-plan.jpg", "query": "?shot=plan" },
+  { "name": "3-caught.jpg", "query": "?shot=caught" },
+  { "name": "4-getaway.jpg", "query": "?shot=report" }
+]
