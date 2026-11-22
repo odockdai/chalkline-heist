@@ -111,7 +111,6 @@ export function alertGuard(run, guard, x, y, why) {
   guard.lastSeen = { x, y };
   guard.mood = why;
   run.events.push('huh');
-  addFloater(run, guard.x, guard.y - 22, why, 'suspect');
 }
 
 export function hearNoise(run, guard, noise) {
@@ -124,7 +123,6 @@ export function hearNoise(run, guard, noise) {
     guard.timer = 1.3;
     guard.lastSeen = { x: noise.x, y: noise.y };
     guard.detect = Math.min(0.6, guard.detect + 0.12);
-    addFloater(run, guard.x, guard.y - 22, 'Footsteps?', 'suspect');
     run.events.push('huh');
   } else {
     alertGuard(run, guard, noise.x, noise.y, 'What was that?');

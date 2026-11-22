@@ -90,6 +90,41 @@ export function drawGuard(ctx, guard, time) {
   }
 }
 
+/** What a wary guard mutters, in a speech bubble over the head, so the cone's change of mood reads at once. */
+function guardSpeech(guard) {
+  if (guard.state === G.CHASE) return 'Stop right there!';
+  if (guard.state === G.LISTEN) return 'Footsteps?';
+  if (guard.state === G.SUSPECT) return guard.mood || 'Hm?';
+  if (guard.state === G.INVESTIGATE || guard.state === G.SEARCH) return guard.cause === 'rattle' ? 'What was that?' : 'Someone there?';
+  return '';
+}
+
+export function drawSpeech(ctx, guard) {
+  const line = guardSpeech(guard);
+  if (!line) return;
+  ctx.save();
+  ctx.font = `700 14px ${FONT.ui}`;
+  const w = ctx.measureText(line).width + 16;
+  const h = 22;
+  const x = Math.max(4, Math.min(MAP.width - w - 4, guard.x - w / 2));
+  const y = Math.max(4, guard.y - 64);
+  const color = guard.state === G.CHASE ? COLOR.chase : COLOR.suspect;
+  ctx.fillStyle = 'rgba(255,248,228,0.96)';
+  ctx.strokeStyle = color;
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.roundRect(x, y, w, h, 6);
+  ctx.moveTo(guard.x - 5, y + h);
+  ctx.lineTo(guard.x, y + h + 7);
+  ctx.lineTo(guard.x + 5, y + h);
+  ctx.fill();
+  ctx.stroke();
+  ctx.fillStyle = '#1b0f12';
+  ctx.textAlign = 'center';
+  ctx.fillText(line, x + w / 2, y + 16);
+  ctx.restore();
+}
+
 export function drawThief(ctx, run, time) {
   const thief = run.thief;
   const hidden = thiefIsHidden(run);

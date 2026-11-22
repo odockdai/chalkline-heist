@@ -8,7 +8,7 @@ import { paintBlueprint, paintFloorMask, drawRoomLabels } from './blueprint.js';
 import { paintLampLight, paintShadowHatch, drawSpotlight } from './lamps.js';
 import { coneColors, coneShape, drawCone, drawNight, drawPatrolRoutes, drawPlan } from './cones.js';
 import { drawDoors, drawFuses, drawCash, drawMark, drawVan, drawSmokes, drawNoises } from './props.js';
-import { drawCamera, drawGuard, drawThief, drawTaskRing, drawFloaters, chalkNote } from './actors.js';
+import { drawCamera, drawGuard, drawSpeech, drawThief, drawTaskRing, drawFloaters, chalkNote } from './actors.js';
 
 export { drawPlan, drawPatrolRoutes } from './cones.js';
 export { drawGem, drawPadlock, drawMark } from './props.js';
@@ -79,6 +79,7 @@ export function drawWorld(ctx, run, time, mouse, options = {}) {
   if (run.phase !== 'plan') drawThief(ctx, run, time);
   for (const camera of run.cameras) drawCamera(ctx, run, camera, time);
   for (const guard of run.guards) drawGuard(ctx, guard, time);
+  if (run.phase === 'infiltrate' || run.phase === 'getaway') for (const guard of run.guards) drawSpeech(ctx, guard);
   if (run.phase === 'infiltrate' || run.phase === 'getaway') drawTaskRing(ctx, run);
   drawFloaters(ctx, run);
   if (options.callouts) for (const note of options.callouts) chalkNote(ctx, note.x, note.y, note.text, COLOR[note.color] ?? COLOR.chalk, note.size ?? 15, note.from);
