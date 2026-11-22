@@ -228,6 +228,12 @@ function legendSwatch(ctx, kind, x, y) {
     ctx.fill();
     ctx.fillStyle = COLOR.camera;
     ctx.fillRect(x - 11, y - 3.5, 8, 7);
+  } else if (kind === 'lamp') {
+    const pool = ctx.createRadialGradient(x, y, 1, x, y, 11);
+    pool.addColorStop(0, 'rgba(255,214,150,0.95)');
+    pool.addColorStop(1, 'rgba(255,186,110,0.05)');
+    ctx.fillStyle = pool;
+    ctx.fillRect(x - 10, y - 7, 20, 14);
   } else if (kind === 'shadow') {
     ctx.fillStyle = COLOR.shadow;
     ctx.fillRect(x - 10, y - 7, 20, 14);
@@ -274,6 +280,7 @@ function legendSwatch(ctx, kind, x, y) {
 const LEGEND = [
   ['guard', 'Guard + torch cone', 'red cone, amber when wary'],
   ['camera', 'Camera, sweeping', 'jam it or cut the fuse'],
+  ['lamp', 'Lamplit floor: exposed', 'a cone here sees you'],
   ['shadow', 'Shadow: hidden', 'unless a guard is on you'],
   ['cover', 'Cases: block sight', ''],
   ['vent', 'Vent: crawl unseen', ''],
@@ -289,7 +296,7 @@ function drawLegend(ctx, x, y, w) {
     legendSwatch(ctx, kind, x + 12, rowY - 4);
     text(ctx, name, x + 30, rowY + 1, 14, COLOR.ink, 500);
     if (note) text(ctx, note, x + w, rowY + 1, 12, COLOR.dim, 500, 'right');
-    rowY += 22;
+    rowY += 21;
   }
 }
 

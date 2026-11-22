@@ -88,9 +88,9 @@ export function drawMark(ctx, run, time) {
   ctx.fillStyle = '#2b2a44';
   ctx.strokeStyle = '#d9c38a';
   ctx.lineWidth = 2;
-  ctx.fillRect(mark.x - 12, mark.y - 12, 24, 24);
-  ctx.strokeRect(mark.x - 12, mark.y - 12, 24, 24);
-  if (!run.thief.carrying) drawGem(ctx, mark.x, mark.y, 9, COLOR.loot);
+  ctx.fillRect(mark.x - 14, mark.y - 14, 28, 28);
+  ctx.strokeRect(mark.x - 14, mark.y - 14, 28, 28);
+  if (!run.thief.carrying) drawGem(ctx, mark.x, mark.y, 12, COLOR.loot);
   ctx.restore();
 }
 

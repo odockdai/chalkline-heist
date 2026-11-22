@@ -5,6 +5,7 @@ import { guardRange, GUARD_STATE } from './guard.js';
 import { cameraOffline } from './camera.js';
 import { aimTool } from './tools.js';
 import { paintBlueprint, paintFloorMask, drawRoomLabels } from './blueprint.js';
+import { paintLampLight, paintShadowHatch, drawSpotlight } from './lamps.js';
 import { coneColors, coneShape, drawCone, drawNight, drawPatrolRoutes, drawPlan } from './cones.js';
 import { drawDoors, drawFuses, drawCash, drawMark, drawVan, drawSmokes, drawNoises } from './props.js';
 import { drawCamera, drawGuard, drawThief, drawTaskRing, drawFloaters, chalkNote } from './actors.js';
@@ -17,7 +18,7 @@ const G = GUARD_STATE;
 const blueprints = new Map();
 
 function blueprintFor(run) {
-  if (!blueprints.has(run.job.id)) blueprints.set(run.job.id, { paper: paintBlueprint(run.map, run.job), floor: paintFloorMask(run.map) });
+  if (!blueprints.has(run.job.id)) blueprints.set(run.job.id, { paper: paintBlueprint(run.map, run.job), floor: paintFloorMask(run.map), lamps: paintLampLight(run.map), hatch: paintShadowHatch(run.map) });
   return blueprints.get(run.job.id);
 }
 
@@ -59,7 +60,15 @@ export function drawWorld(ctx, run, time, mouse, options = {}) {
   const range = guardRange(run);
   const torches = run.guards.map((guard) => ({ guard, shape: coneShape(run, guard.x, guard.y, guard.heading, SIGHT.guardHalf, range) }));
   drawNight(ctx, sheets.floor, [...lenses, ...torches].map((cone) => cone.shape), run.phase === 'plan' ? 0.4 : 0.95);
+  if (run.phase !== 'plan') {
+    ctx.save();
+    ctx.globalCompositeOperation = 'lighter';
+    ctx.drawImage(sheets.lamps, 0, 0);
+    ctx.restore();
+  }
+  ctx.drawImage(sheets.hatch, 0, 0);
   drawRoomLabels(ctx, run.job);
+  if (!run.thief.carrying) drawSpotlight(ctx, run.map.mark, time);
   drawCash(ctx, run, time);
   drawMark(ctx, run, time);
   drawVan(ctx, run, time);
