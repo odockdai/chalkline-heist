@@ -75,7 +75,7 @@ function drawAlarmMeter(ctx, run, x, y, w) {
   tracked(ctx, label, x + w, y + 14, 14, labelColor, 2, 700, 'right');
 
   const barY = y + 24;
-  const barH = 22;
+  const barH = 28;
   ctx.fillStyle = '#04101f';
   ctx.fillRect(x, barY, w, barH);
   const fill = (w * level) / ALARM.lockdown;
@@ -101,9 +101,10 @@ function drawAlarmMeter(ctx, run, x, y, w) {
   ctx.fillText('CALM', x + 3, barY + barH + 14);
   ctx.fillText('ALERT', x + (w * ALARM.floors[1]) / 100 + 3, barY + barH + 14);
   ctx.fillText('HUNT', x + (w * ALARM.floors[2]) / 100 + 3, barY + barH + 14);
-  text(ctx, `${Math.round(level)}%`, x + w, barY + barH + 14, 12, COLOR.ink, 700, 'right');
-  if (lock) text(ctx, `Police in ${Math.ceil(run.lockdown)}s`, x, barY + barH + 32, 15, COLOR.danger, 700);
-  else text(ctx, run.alarm > 0.5 && run.lastAlarmReason ? run.lastAlarmReason : 'Settles back while nobody sees you', x, barY + barH + 32, 13, COLOR.dim, 500);
+  if (fill > 34) text(ctx, `${Math.round(level)}%`, x + fill - 6, barY + barH - 8, 15, COLOR.night, 700, 'right');
+  else text(ctx, `${Math.round(level)}%`, x + fill + 6, barY + barH - 8, 15, COLOR.ink, 700);
+  if (lock) text(ctx, `Police in ${Math.ceil(run.lockdown)}s`, x, barY + barH + 30, 15, COLOR.danger, 700);
+  else text(ctx, run.alarm > 0.5 && run.lastAlarmReason ? run.lastAlarmReason : 'Settles back while nobody sees you', x, barY + barH + 30, 13, COLOR.dim, 500);
 }
 
 function drawEye(ctx, x, y, color, open) {
@@ -278,25 +279,24 @@ function legendSwatch(ctx, kind, x, y) {
 }
 
 const LEGEND = [
-  ['guard', 'Guard + torch cone', 'red cone, amber when wary'],
-  ['camera', 'Camera, sweeping', 'jam it or cut the fuse'],
-  ['lamp', 'Lamplit floor: exposed', 'a cone here sees you'],
-  ['shadow', 'Shadow: hidden', 'unless a guard is on you'],
-  ['cover', 'Cases: block sight', ''],
-  ['vent', 'Vent: crawl unseen', ''],
-  ['lock', 'Locked door', 'costs a lockpick'],
-  ['loot', 'The mark', 'cash stacks are a bonus'],
-  ['van', 'Getaway van', 'reach it with the mark'],
+  ['guard', 'Guard torch: red, amber when wary'],
+  ['camera', 'Camera: jam it or cut its fuse'],
+  ['lamp', 'Lamplit floor: exposed'],
+  ['shadow', 'Shadow: hidden'],
+  ['cover', 'Cases: block sight'],
+  ['vent', 'Vent: crawl unseen'],
+  ['lock', 'Locked door: one lockpick'],
+  ['loot', 'The mark, worth the job'],
+  ['van', 'Getaway van'],
 ];
 
 function drawLegend(ctx, x, y, w) {
   tracked(ctx, 'LEGEND', x, y + 14, 14, COLOR.ink, 2.5);
-  let rowY = y + 32;
-  for (const [kind, name, note] of LEGEND) {
-    legendSwatch(ctx, kind, x + 12, rowY - 4);
-    text(ctx, name, x + 30, rowY + 1, 14, COLOR.ink, 500);
-    if (note) text(ctx, note, x + w, rowY + 1, 12, COLOR.dim, 500, 'right');
-    rowY += 21;
+  let rowY = y + 36;
+  for (const [kind, name] of LEGEND) {
+    legendSwatch(ctx, kind, x + 12, rowY - 5);
+    text(ctx, name, x + 32, rowY + 1, 15, COLOR.ink, 500);
+    rowY += 24;
   }
 }
 

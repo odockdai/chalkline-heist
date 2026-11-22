@@ -14,6 +14,11 @@ export function drawCamera(ctx, run, camera, time) {
   const off = cameraOffline(run, camera);
   ctx.save();
   ctx.translate(camera.x, camera.y);
+  ctx.fillStyle = 'rgba(2,6,14,0.55)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 15, 0, Math.PI * 2);
+  ctx.fill();
+  ctx.scale(1.45, 1.45);
   ctx.fillStyle = '#1a1030';
   ctx.strokeStyle = off ? '#7d8597' : COLOR.camera;
   ctx.lineWidth = 2;
@@ -30,14 +35,14 @@ export function drawCamera(ctx, run, camera, time) {
   if (!off && Math.floor(time * 2) % 2 === 0) {
     ctx.fillStyle = '#ff2e55';
     ctx.beginPath();
-    ctx.arc(camera.x - 8, camera.y - 8, 2.5, 0, Math.PI * 2);
+    ctx.arc(camera.x - 11, camera.y - 11, 3.5, 0, Math.PI * 2);
     ctx.fill();
   }
   if (off) {
     ctx.strokeStyle = '#c9d2e3';
-    ctx.lineWidth = 1.5;
+    ctx.lineWidth = 2;
     ctx.beginPath();
-    ctx.arc(camera.x, camera.y, 13, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, Math.max(camera.jammed / 9, run.powerCut / 12)));
+    ctx.arc(camera.x, camera.y, 18, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * Math.min(1, Math.max(camera.jammed / 9, run.powerCut / 12)));
     ctx.stroke();
   }
 }
@@ -46,7 +51,12 @@ export function drawGuard(ctx, guard, time) {
   const { ring } = coneColors(guard);
   ctx.save();
   ctx.translate(guard.x, guard.y);
+  ctx.fillStyle = 'rgba(2,6,14,0.55)';
+  ctx.beginPath();
+  ctx.arc(0, 0, 20, 0, Math.PI * 2);
+  ctx.fill();
   ctx.rotate(guard.heading);
+  ctx.scale(1.45, 1.45);
   ctx.fillStyle = '#1b0f12';
   ctx.strokeStyle = ring;
   ctx.lineWidth = 2.5;
@@ -67,11 +77,11 @@ export function drawGuard(ctx, guard, time) {
     ctx.strokeStyle = 'rgba(0,0,0,0.45)';
     ctx.lineWidth = 4;
     ctx.beginPath();
-    ctx.arc(guard.x, guard.y, 16, 0, Math.PI * 2);
+    ctx.arc(guard.x, guard.y, 23, 0, Math.PI * 2);
     ctx.stroke();
     ctx.strokeStyle = guard.state === G.CHASE ? COLOR.chase : COLOR.suspect;
     ctx.beginPath();
-    ctx.arc(guard.x, guard.y, 16, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * full);
+    ctx.arc(guard.x, guard.y, 23, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * full);
     ctx.stroke();
   }
   const mark = guard.state === G.CHASE ? '!' : guard.state === G.SUSPECT || guard.state === G.INVESTIGATE || guard.state === G.SEARCH || guard.state === G.LISTEN ? '?' : '';
@@ -80,12 +90,12 @@ export function drawGuard(ctx, guard, time) {
     const color = mark === '!' ? COLOR.chase : COLOR.suspect;
     ctx.fillStyle = color;
     ctx.beginPath();
-    ctx.arc(guard.x, guard.y - 30 + bob, 9, 0, Math.PI * 2);
+    ctx.arc(guard.x, guard.y - 37 + bob, 10, 0, Math.PI * 2);
     ctx.fill();
     ctx.fillStyle = '#1b0f12';
-    ctx.font = `700 15px ${FONT.ui}`;
+    ctx.font = `700 17px ${FONT.ui}`;
     ctx.textAlign = 'center';
-    ctx.fillText(mark, guard.x, guard.y - 25 + bob);
+    ctx.fillText(mark, guard.x, guard.y - 31 + bob);
     ctx.textAlign = 'left';
   }
 }
@@ -107,7 +117,7 @@ export function drawSpeech(ctx, guard) {
   const w = ctx.measureText(line).width + 16;
   const h = 22;
   const x = Math.max(4, Math.min(MAP.width - w - 4, guard.x - w / 2));
-  const y = Math.max(4, guard.y - 64);
+  const y = Math.max(4, guard.y - 78);
   const color = guard.state === G.CHASE ? COLOR.chase : COLOR.suspect;
   ctx.fillStyle = 'rgba(255,248,228,0.96)';
   ctx.strokeStyle = color;
@@ -143,23 +153,24 @@ export function drawThief(ctx, run, time) {
   ctx.stroke();
   ctx.setLineDash([]);
   ctx.translate(thief.x, thief.y);
-  const glow = ctx.createRadialGradient(0, 0, 4, 0, 0, 26);
-  glow.addColorStop(0, 'rgba(79,240,193,0.45)');
+  const glow = ctx.createRadialGradient(0, 0, 6, 0, 0, 36);
+  glow.addColorStop(0, 'rgba(79,240,193,0.5)');
   glow.addColorStop(1, 'rgba(79,240,193,0)');
   ctx.fillStyle = glow;
   ctx.beginPath();
-  ctx.arc(0, 0, 26, 0, Math.PI * 2);
+  ctx.arc(0, 0, 36, 0, Math.PI * 2);
   ctx.fill();
   if (hidden) {
     ctx.strokeStyle = COLOR.thief;
     ctx.setLineDash([3, 3]);
     ctx.lineWidth = 1.5;
     ctx.beginPath();
-    ctx.arc(0, 0, 15 + Math.sin(time * 4), 0, Math.PI * 2);
+    ctx.arc(0, 0, 22 + Math.sin(time * 4), 0, Math.PI * 2);
     ctx.stroke();
     ctx.setLineDash([]);
   }
   ctx.rotate(thief.heading);
+  ctx.scale(1.4, 1.4);
   ctx.globalAlpha = thief.inVent ? 0.6 : 1;
   ctx.fillStyle = '#062a22';
   ctx.strokeStyle = COLOR.thief;
@@ -178,7 +189,7 @@ export function drawThief(ctx, run, time) {
   ctx.fillRect(-12, -9, 5, 18);
   if (thief.carrying) {
     ctx.rotate(-thief.heading);
-    drawGem(ctx, -10, -10, 6, COLOR.loot);
+    drawGem(ctx, -10, -10, 5, COLOR.loot);
   }
   ctx.restore();
 }
@@ -191,11 +202,11 @@ export function drawTaskRing(ctx, run) {
     ctx.strokeStyle = 'rgba(0,0,0,0.5)';
     ctx.lineWidth = 5;
     ctx.beginPath();
-    ctx.arc(thief.x, thief.y, 20, 0, Math.PI * 2);
+    ctx.arc(thief.x, thief.y, 26, 0, Math.PI * 2);
     ctx.stroke();
     ctx.strokeStyle = thief.task.kind === 'grab' ? COLOR.loot : thief.task.kind === 'fuse' ? COLOR.camera : COLOR.lock;
     ctx.beginPath();
-    ctx.arc(thief.x, thief.y, 20, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * t);
+    ctx.arc(thief.x, thief.y, 26, -Math.PI / 2, -Math.PI / 2 + Math.PI * 2 * t);
     ctx.stroke();
   }
   if (task && !thief.task) chalkNote(ctx, thief.x + 18, thief.y + 26, task.label, COLOR.chalk, 14);

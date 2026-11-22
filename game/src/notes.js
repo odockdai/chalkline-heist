@@ -45,27 +45,26 @@ function nearest(list, x, y, skip) {
 }
 
 /** The notes to show this frame, nearest things first, at most `limit` of them. */
-export function fieldNotes(run, limit = 5) {
+export function fieldNotes(run, limit = 4) {
   const thief = run.thief;
   const notes = [{ subject: thief, text: thiefLine(run), color: run.seenBy.length > 0 ? 'danger' : 'thief' }];
   if (thief.carrying) notes.push({ subject: run.map.exit, text: 'VAN: get here with the mark', color: 'exit' });
   else notes.push({ subject: run.map.mark, text: `${run.job.mark.name.toUpperCase()}: $${run.job.mark.value.toLocaleString('en-US')}`, color: 'loot' });
   const guards = [...run.guards].sort((a, b) => Math.hypot(a.x - thief.x, a.y - thief.y) - Math.hypot(b.x - thief.x, b.y - thief.y));
-  for (const guard of guards.slice(0, 2)) {
-    const color = guard.state === G.CHASE ? 'danger' : guard.state === G.PATROL || guard.state === G.WAIT ? 'guard' : 'suspect';
-    notes.push({ subject: guard, text: guardLine(guard), color });
-  }
+  const guardNote = (guard) => ({ subject: guard, text: guardLine(guard), color: guard.state === G.CHASE ? 'danger' : guard.state === G.PATROL || guard.state === G.WAIT ? 'guard' : 'suspect' });
+  if (guards[0]) notes.push(guardNote(guards[0]));
   const camera = nearest(run.cameras, thief.x, thief.y);
   if (camera) {
     const off = cameraOffline(run, camera);
     const left = Math.ceil(Math.max(camera.jammed, run.powerCut));
     notes.push({ subject: camera, text: off ? `CAMERA: blind for ${left}s` : camera.lock > 0 ? 'CAMERA: has you, recording' : `CAMERA: sweeps, ${Math.round(SIGHT.cameraRange / 32)} tiles deep`, color: 'camera' });
   }
+  if (guards[1]) notes.push(guardNote(guards[1]));
   return notes.slice(0, limit);
 }
 
 const OFFSETS = [
-  [34, -34], [34, 46], [-34, -34], [-34, 46], [48, 6], [-48, 6], [30, -72], [-30, -72], [30, 84], [-30, 84],
+  [40, -38], [40, 52], [-40, -38], [-40, 52], [54, 8], [-54, 8], [34, -80], [-34, -80], [34, 92], [-34, 92],
 ];
 
 function overlaps(a, list) {
@@ -73,11 +72,11 @@ function overlaps(a, list) {
 }
 
 /** Draw the notes in map space (the caller has translated to the map). */
-export function drawFieldNotes(ctx, notes, size = 15) {
+export function drawFieldNotes(ctx, notes, size = 15, avoid = []) {
   ctx.save();
   ctx.font = `${size}px ${FONT.hand}`;
-  // Keep every label off every subject, so a note never hides the thing it explains.
-  const placed = notes.map((note) => ({ x: note.subject.x - 16, y: note.subject.y - 16, w: 32, h: 32 }));
+  // Keep every label off every subject and every guard or camera, so a note never hides what it explains.
+  const placed = [...notes.map((note) => note.subject), ...avoid].map((point) => ({ x: point.x - 22, y: point.y - 22, w: 44, h: 44 }));
   for (const note of notes) {
     const width = ctx.measureText(note.text).width + 12;
     const height = size + 10;
@@ -93,7 +92,7 @@ export function drawFieldNotes(ctx, notes, size = 15) {
     }
     if (!spot) continue;
     placed.push(spot.box);
-    const anchor = { x: note.subject.x + Math.sign(spot.x - note.subject.x) * 10, y: note.subject.y };
+    const anchor = { x: note.subject.x + Math.sign(spot.x - note.subject.x) * 16, y: note.subject.y };
     note.placed = { x: spot.x, y: spot.y, from: anchor };
   }
   for (const note of notes) {
