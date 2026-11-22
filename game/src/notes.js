@@ -48,6 +48,8 @@ function nearest(list, x, y, skip) {
 export function fieldNotes(run, limit = 5) {
   const thief = run.thief;
   const notes = [{ subject: thief, text: thiefLine(run), color: run.seenBy.length > 0 ? 'danger' : 'thief' }];
+  if (thief.carrying) notes.push({ subject: run.map.exit, text: 'VAN: get here with the mark', color: 'exit' });
+  else notes.push({ subject: run.map.mark, text: `${run.job.mark.name.toUpperCase()}: $${run.job.mark.value.toLocaleString('en-US')}`, color: 'loot' });
   const guards = [...run.guards].sort((a, b) => Math.hypot(a.x - thief.x, a.y - thief.y) - Math.hypot(b.x - thief.x, b.y - thief.y));
   for (const guard of guards.slice(0, 2)) {
     const color = guard.state === G.CHASE ? 'danger' : guard.state === G.PATROL || guard.state === G.WAIT ? 'guard' : 'suspect';
@@ -59,8 +61,6 @@ export function fieldNotes(run, limit = 5) {
     const left = Math.ceil(Math.max(camera.jammed, run.powerCut));
     notes.push({ subject: camera, text: off ? `CAMERA: blind for ${left}s` : camera.lock > 0 ? 'CAMERA: has you, recording' : `CAMERA: sweeps, ${Math.round(SIGHT.cameraRange / 32)} tiles deep`, color: 'camera' });
   }
-  if (thief.carrying) notes.push({ subject: run.map.exit, text: 'VAN: get here with the mark', color: 'exit' });
-  else notes.push({ subject: run.map.mark, text: `${run.job.mark.name.toUpperCase()}: $${run.job.mark.value.toLocaleString('en-US')}`, color: 'loot' });
   return notes.slice(0, limit);
 }
 

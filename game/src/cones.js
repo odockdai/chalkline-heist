@@ -28,14 +28,23 @@ export function coneShape(run, x, y, heading, half, range) {
 export function drawCone(ctx, shape, rgb, strength) {
   const { x, y, range, points } = shape;
   const gradient = ctx.createRadialGradient(x, y, 6, x, y, range);
-  gradient.addColorStop(0, `${rgb}${0.5 * strength})`);
-  gradient.addColorStop(0.7, `${rgb}${0.26 * strength})`);
-  gradient.addColorStop(1, `${rgb}${0.1 * strength})`);
+  gradient.addColorStop(0, `${rgb}${0.62 * strength})`);
+  gradient.addColorStop(0.55, `${rgb}${0.34 * strength})`);
+  gradient.addColorStop(1, `${rgb}${0.12 * strength})`);
   fillPolygon(ctx, points);
   ctx.fillStyle = gradient;
   ctx.fill();
-  ctx.strokeStyle = `${rgb}${0.85 * strength})`;
-  ctx.lineWidth = 1.6;
+  ctx.save();
+  ctx.globalCompositeOperation = 'lighter';
+  const hot = ctx.createRadialGradient(x, y, 2, x, y, range);
+  hot.addColorStop(0, 'rgba(255,236,190,0.5)');
+  hot.addColorStop(0.45, 'rgba(255,236,190,0.18)');
+  hot.addColorStop(1, 'rgba(255,236,190,0.03)');
+  ctx.fillStyle = hot;
+  ctx.fill();
+  ctx.restore();
+  ctx.strokeStyle = `${rgb}${0.95 * strength})`;
+  ctx.lineWidth = 2.2;
   ctx.stroke();
 }
 

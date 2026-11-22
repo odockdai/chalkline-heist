@@ -71,9 +71,12 @@ export function drawMark(ctx, run, time) {
   const mark = run.map.mark;
   const pulse = 0.5 + 0.5 * Math.sin(time * 3);
   ctx.save();
-  ctx.fillStyle = `rgba(255,210,63,${0.1 + 0.08 * pulse})`;
+  const halo = ctx.createRadialGradient(mark.x, mark.y, 4, mark.x, mark.y, 46 + pulse * 6);
+  halo.addColorStop(0, `rgba(255,214,80,${0.42 + 0.1 * pulse})`);
+  halo.addColorStop(1, 'rgba(255,214,80,0)');
+  ctx.fillStyle = halo;
   ctx.beginPath();
-  ctx.arc(mark.x, mark.y, 30 + pulse * 6, 0, Math.PI * 2);
+  ctx.arc(mark.x, mark.y, 46 + pulse * 6, 0, Math.PI * 2);
   ctx.fill();
   ctx.strokeStyle = `rgba(255,210,63,${0.55 + 0.3 * pulse})`;
   ctx.lineWidth = 1.5;

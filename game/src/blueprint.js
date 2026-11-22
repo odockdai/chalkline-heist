@@ -73,16 +73,18 @@ export function paintBlueprint(map, job) {
   paintCover(ctx, map);
   paintWallEdges(ctx, map);
 
-  ctx.font = `600 13px ${FONT.ui}`;
-  ctx.textBaseline = 'alphabetic';
-  ctx.fillStyle = 'rgba(200,222,250,0.55)';
-  for (const room of job.rooms) {
-    ctx.save();
-    ctx.letterSpacing = '2px';
-    ctx.fillText(room.label, room.x * TILE, room.y * TILE);
-    ctx.restore();
-  }
   return canvas;
+}
+
+/** Room names, drawn above the night layer so they stay readable in the dark. */
+export function drawRoomLabels(ctx, job) {
+  ctx.save();
+  ctx.font = `700 16px ${FONT.ui}`;
+  ctx.textBaseline = 'alphabetic';
+  ctx.letterSpacing = '2px';
+  ctx.fillStyle = 'rgba(176,204,240,0.62)';
+  for (const room of job.rooms) ctx.fillText(room.label, room.x * TILE, room.y * TILE);
+  ctx.restore();
 }
 
 /** An opaque mask of the tiles night falls on (floor, shadow, vents), so walls and cases stay crisp. */

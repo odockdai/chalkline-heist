@@ -4,7 +4,7 @@ import { MAP, COLOR, SIGHT } from './config.js';
 import { guardRange, GUARD_STATE } from './guard.js';
 import { cameraOffline } from './camera.js';
 import { aimTool } from './tools.js';
-import { paintBlueprint, paintFloorMask } from './blueprint.js';
+import { paintBlueprint, paintFloorMask, drawRoomLabels } from './blueprint.js';
 import { coneColors, coneShape, drawCone, drawNight, drawPatrolRoutes, drawPlan } from './cones.js';
 import { drawDoors, drawFuses, drawCash, drawMark, drawVan, drawSmokes, drawNoises } from './props.js';
 import { drawCamera, drawGuard, drawThief, drawTaskRing, drawFloaters, chalkNote } from './actors.js';
@@ -58,7 +58,8 @@ export function drawWorld(ctx, run, time, mouse, options = {}) {
   const lenses = run.cameras.filter((camera) => !cameraOffline(run, camera)).map((camera) => ({ camera, shape: coneShape(run, camera.x, camera.y, camera.heading, SIGHT.cameraHalf, SIGHT.cameraRange) }));
   const range = guardRange(run);
   const torches = run.guards.map((guard) => ({ guard, shape: coneShape(run, guard.x, guard.y, guard.heading, SIGHT.guardHalf, range) }));
-  drawNight(ctx, sheets.floor, [...lenses, ...torches].map((cone) => cone.shape), run.phase === 'plan' ? 0.35 : 0.62);
+  drawNight(ctx, sheets.floor, [...lenses, ...torches].map((cone) => cone.shape), run.phase === 'plan' ? 0.4 : 0.95);
+  drawRoomLabels(ctx, run.job);
   drawCash(ctx, run, time);
   drawMark(ctx, run, time);
   drawVan(ctx, run, time);
